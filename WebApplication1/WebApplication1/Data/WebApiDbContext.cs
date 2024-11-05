@@ -14,6 +14,10 @@ namespace WebApplication1.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<WeatherForecast>()
+                .HasIndex(f => new { f.Id, f.Date })
+                .IsUnique();
+
             base.OnModelCreating(modelBuilder);
         }
     }

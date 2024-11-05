@@ -41,7 +41,7 @@ namespace WebApplication1.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Forecasts");
+                    b.ToTable("Forecasts", (string)null);
                 });
 #pragma warning restore 612, 618
         }

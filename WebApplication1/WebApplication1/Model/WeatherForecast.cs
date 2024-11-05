@@ -5,12 +5,10 @@ namespace WebApplication1.Model
 {
     public class WeatherForecast
     {
-        [Key]
         public int Id { get; set; }
-        
-        [Required]
         public DateOnly Date { get; set; }
         
+
         [Required]
         [DisplayName("Temperature \"°C\"")]
         public int TemperatureC { get; set; }
