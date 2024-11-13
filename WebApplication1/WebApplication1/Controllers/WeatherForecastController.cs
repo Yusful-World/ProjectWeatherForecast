@@ -33,15 +33,21 @@ namespace WebApplication1.Controllers
             _dbContext = dbContext;
             _logger = logger;
 
-            //if (_dbContext.Forecasts.Any())
-            //{
-            //    _dbContext.Forecasts.RemoveRange(_dbContext.Forecasts);
-            //    _dbContext.SaveChanges();
-            //}
+            if (_dbContext.Forecasts.Any())
+            {
+                _dbContext.Forecasts.RemoveRange(_dbContext.Forecasts);
+                _dbContext.SaveChanges();
+            }
 
+
+        }
+
+        [HttpGet(Name = "GetWeatherForecast")]
+        public IActionResult Get()
+        {
             if (!_dbContext.Forecasts.Any())
             {
-                var forecasts = Enumerable.Range(1, 5).Select(index => 
+                var forecasts = Enumerable.Range(1, 5).Select(index =>
                 {
                     var temperatureC = Random.Shared.Next(-20, 55);
                     return new WeatherForecast
@@ -55,15 +61,9 @@ namespace WebApplication1.Controllers
                 ).ToList();
 
                 _dbContext.Forecasts.AddRange(forecasts);
-                //_dbContext.Forecasts.RemoveRange(_dbContext.Forecasts);
                 _dbContext.SaveChanges();
             }
-        }
-
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
-        {
-            return _dbContext.Forecasts.ToList();
+            return Ok();
 
         }
 
@@ -81,13 +81,13 @@ namespace WebApplication1.Controllers
             return CreatedAtRoute("GetWeatherForecast", new { Id = newForecast.Id }, "New forecast created successfully");
         }
 
-        [HttpPatch("{id}/{date}", Name = "Update Forecast")]
+        [HttpPatch("{id}", Name = "Update Forecast")]
         public IActionResult Patch(int Id, DateOnly date, [FromBody] WeatherForecast updateForecast)
         {
-            var forecast = _dbContext.Forecasts.FirstOrDefault(forecast => forecast.Id == Id || forecast.Date == date);
+            var forecast = _dbContext.Forecasts.FirstOrDefault(forecast => forecast.Id == Id);
             if (forecast == null)
             {
-                return NotFound("Weather forecast data not found");
+                return BadRequest("Weather forecast data does not exist");
             }
 
             if (updateForecast.Date != default)
@@ -109,20 +109,20 @@ namespace WebApplication1.Controllers
 
         }
 
-        [HttpDelete("{id}/{date}", Name = "Delete Forecast")]
+        [HttpDelete("{id}", Name = "Delete Forecast")]
         public IActionResult Delete(int Id, DateOnly date)
         {
-            var forecast = _dbContext.Forecasts.FirstOrDefault(forecast => forecast.Id == Id || forecast.Date == date);
+            var forecast = _dbContext.Forecasts.FirstOrDefault(forecast => forecast.Id == Id);
 
             if (forecast == null)
             {
-                return NotFound("Weather forecast data not found");
+                return BadRequest("Weather forecast data does not exist");
             }
 
             _dbContext.Forecasts.Remove(forecast);
             _dbContext.SaveChanges();
             
-            return NoContent();
+            return Ok("forecast deleted successfully");
         }
 
     }
